@@ -8,29 +8,37 @@
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
-    <keycloak.version>24.0.0</keycloak.version>
+    <keycloak.version>24.0.5</keycloak.version>
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>org.keycloak</groupId>
-      <artifactId>keycloak-server-spi</artifactId>
-      <version>${keycloak.version}</version>
+   <dependency>
+     <groupId>org.keycloak</groupId>
+     <artifactId>keycloak-server-spi</artifactId>
+      <version>24.0.5</version>
       <scope>provided</scope>
     </dependency>
 
-    <dependency>
+   <dependency>
       <groupId>org.keycloak</groupId>
       <artifactId>keycloak-server-spi-private</artifactId>
-      <version>${keycloak.version}</version>
-      <scope>provided</scope>
-    </dependency>
+       <version>24.0.5</version>
+       <scope>provided</scope>
+     </dependency>
 
     <dependency>
-      <groupId>org.keycloak</groupId>
-      <artifactId>keycloak-model-legacy</artifactId>
-      <version>${keycloak.version}</version>
+       <groupId>org.keycloak</groupId>
+       <artifactId>keycloak-model-jpa</artifactId>
+       <version>24.0.5</version>
+       <scope>provided</scope>
+     </dependency>
+
+    <dependency>
+    <groupId>org.keycloak</groupId>
+    <artifactId>keycloak-model-legacy</artifactId>
+     <version>24.0.5</version>
       <scope>provided</scope>
-    </dependency>
+</dependency> 
+
   </dependencies>
 </project>

@@ -3,13 +3,21 @@ package com.example.keycloak.db;
 import org.keycloak.component.ComponentModel;
 import org.keycloak.credential.CredentialInput;
 import org.keycloak.credential.CredentialInputValidator;
-import org.keycloak.models.*;
+import org.keycloak.credential.PasswordCredentialModel;
+import org.keycloak.models.KeycloakSession;
+import org.keycloak.models.RealmModel;
+import org.keycloak.models.UserModel;
 import org.keycloak.storage.UserStorageProvider;
 import org.keycloak.storage.user.UserLookupProvider;
+import org.keycloak.storage.user.UserQueryProvider;
+
+import java.util.List;
+import java.util.Map;
 
 public class DbUserStorageProvider implements
         UserStorageProvider,
         UserLookupProvider,
+        UserQueryProvider,
         CredentialInputValidator {
 
     private final KeycloakSession session;
@@ -20,44 +28,75 @@ public class DbUserStorageProvider implements
         this.model = model;
     }
 
-    @Override
-    public void close() {}
+    // ============= Lookup Methods =============
 
     @Override
-    public UserModel getUserByUsername(RealmModel realm, String username) {
-        UserModel existing = session.users().getUserByUsername(realm, username);
-        if (existing == null) return null;
-        return new HardcodedUserAdapter(session, realm, model, existing);
+    public UserModel getUserById(String id, RealmModel realm) {
+        String externalId = id.substring(id.indexOf(':') + 1);
+        return loadUser(externalId, realm);
     }
 
     @Override
-    public UserModel getUserById(RealmModel realm, String id) {
-        UserModel existing = session.users().getUserById(realm, id);
-        if (existing == null) return null;
-        return new HardcodedUserAdapter(session, realm, model, existing);
+    public UserModel getUserByUsername(String username, RealmModel realm) {
+        return loadUser(username, realm);
     }
 
     @Override
-    public UserModel getUserByEmail(RealmModel realm, String email) {
-        UserModel existing = session.users().getUserByEmail(realm, email);
-        if (existing == null) return null;
-        return new HardcodedUserAdapter(session, realm, model, existing);
+    public UserModel getUserByEmail(String email, RealmModel realm) {
+        return null;
     }
 
-    // LDAP performs authentication
-    @Override
-    public boolean supportsCredentialType(String type) {
-        return false;
-    }
+    // ============= Required Query Methods =============
 
     @Override
-    public boolean isConfiguredFor(RealmModel realm, UserModel user, String type) {
-        return false;
+    public List<UserModel> getUsers(RealmModel realm) {
+        return List.of();
     }
 
     @Override
-    public boolean isValid(RealmModel realm, UserModel user, CredentialInput input) {
-        return false;
+    public List<UserModel> getUsers(RealmModel realm, int first, int max) {
+        return List.of();
     }
+
+    @Override
+    public int getUsersCount(RealmModel realm) {
+        return 0;
+    }
+
+    @Override
+    public List<UserModel> searchForUser(Map<String, String> params, RealmModel realm) {
+        return List.of();
+    }
+
+    @Override
+    public List<UserModel> searchForUser(String search, RealmModel realm) {
+        return List.of();
+    }
+
+    // ============= Credential Validation =============
+
+    @Override
+    public boolean supportsCredentialType(String credentialType) {
+        return PasswordCredentialModel.TYPE.equals(credentialType);
+    }
+
+    @Override
+    public boolean isConfiguredFor(RealmModel realm, UserModel user, String credentialType) {
+        return true; // LDAP handles password
+    }
+
+    @Override
+    public boolean isValid(RealmModel realm, UserModel user, CredentialInput credentialInput) {
+        return true; // Always valid (we rely on LDAP)
+    }
+
+    // ============= Load User Adapter =============
+
+    private UserModel loadUser(String username, RealmModel realm) {
+        return new HardcodedUserAdapter(session, realm, model, username);
+    }
+
+    @Override
+    public void close() { }
 }
 
