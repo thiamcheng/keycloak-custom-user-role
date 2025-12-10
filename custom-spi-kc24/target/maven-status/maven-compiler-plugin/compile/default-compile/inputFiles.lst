@@ -1,0 +1,3 @@
+/workspaces/keycloak-custom-user-role/custom-spi-kc24/src/main/java/com/example/keycloak/db/DbUserStorageProvider.java
+/workspaces/keycloak-custom-user-role/custom-spi-kc24/src/main/java/com/example/keycloak/db/DbUserStorageProviderFactory.java
+/workspaces/keycloak-custom-user-role/custom-spi-kc24/src/main/java/com/example/keycloak/db/HardcodedUserAdapter.java
